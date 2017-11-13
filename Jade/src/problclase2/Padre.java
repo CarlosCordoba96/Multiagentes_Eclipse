@@ -8,7 +8,7 @@ import jade.lang.acl.MessageTemplate;
  
 import jade.proto.AchieveREResponder;
 import jade.proto.ProposeInitiator;
- 
+//HIJO--FIPA QUERY--> PADRE --FIPA PROPOSE-->MADRE
 public class Padre extends Agent {
  
     private boolean aceptado = false;
@@ -20,8 +20,8 @@ public class Padre extends Agent {
     if (args != null && args.length == 1) {
 		//PROTOCOLO PROPOSE
         //Configurar y lanzar comportamiento de inicio de peticion
-        ACLMessage mensaje = new ACLMessage(ACLMessage. ......);
-        mensaje.setProtocol(FIPANames.InteractionProtocol. ......);
+        ACLMessage mensaje = new ACLMessage(ACLMessage.PROPOSE );
+        mensaje.setProtocol(FIPANames.InteractionProtocol.FIPA_PROPOSE);
         mensaje.setContent("Puede salir el niño de fiesta?");
  
         mensaje.addReceiver(new AID((String) args[0], AID.ISLOCALNAME));
@@ -32,8 +32,8 @@ public class Padre extends Agent {
  
 		// PROTOCOLO FIPA-QUERY
         //Configurar y lanzar comportamiento de escucha
-        MessageTemplate plantilla = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol. ......);
-        this.addBehaviour(new ComprobarResponder(this, ......));
+        MessageTemplate plantilla = AchieveREResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_QUERY);
+        this.addBehaviour(new ComprobarResponder(this,plantilla));
  
         }
         else System.out.println("Debe escribir el nombre del tercer agente (pasado como parametro).");
@@ -49,15 +49,19 @@ public class Padre extends Agent {
             System.out.printf("Recibida peticion de %s , le preguntare a la madre.\n", request.getSender().getLocalName());
  
             ACLMessage agree = request.createReply();
-            agree.setPerformative(ACLMessage. ......); //confirmamos recepcion del mensaje
+            agree.setPerformative(ACLMessage.AGREE ); //confirmamos recepcion del mensaje
             return agree;
         }
  
         protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response){
             System.out.printf("Comprobando si la madre le deja.\n");
- 
+ //LANZAR AQUI LO DEL PRINNCIPIO COMPORTAMIENTO DEL INITIATOR
+            
+            
+            
+            
             ACLMessage inform = request.createReply();
-            inform.setPerformative(ACLMessage. ......); // creamos el inform
+            inform.setPerformative(ACLMessage.INFORM ); // creamos el inform
  
 			String retorno;
 			if ( aceptado )
@@ -65,7 +69,7 @@ public class Padre extends Agent {
 			else
 				retorno = "No, mañana tienes que madrugar.";
 
-			inform.setContent(......); // retornamos la decision
+			inform.setContent(retorno); // retornamos la decision
 
 			System.out.printf("Mandando respuesta al hijo.\n");
 
@@ -74,9 +78,9 @@ public class Padre extends Agent {
     }
  
 	// Pregunta a la madre
-    class ...... extends ProposeInitiator {
+    class PreguntarSiAceptado extends ProposeInitiator {
  
-        public ......(Agent agente, ACLMessage mensaje) {
+        public PreguntarSiAceptado(Agent agente, ACLMessage mensaje) {
             super(agente, mensaje);
         }
  

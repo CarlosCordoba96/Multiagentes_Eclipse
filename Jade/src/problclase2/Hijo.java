@@ -5,7 +5,7 @@ import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 import jade.domain.FIPANames;
  
- 
+//HIJO--FIPA QUERY--> PADRE --FIPA PROPOSE-->MADRE
 public class Hijo extends Agent {
  
     protected void setup()
@@ -17,7 +17,7 @@ public class Hijo extends Agent {
  
             ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
             msg.addReceiver(new AID((String) args[0], AID.ISLOCALNAME));
-            msg.setProtocol(FIPANames.InteractionProtocol. ......); // protocolo a utilizar
+            msg.setProtocol(FIPANames.InteractionProtocol.FIPA_QUERY); // protocolo a utilizar
             msg.setContent("¿Puedo salir de fiesta?");;
  
             addBehaviour(new ManejadorInitiator(this,msg));
@@ -33,35 +33,35 @@ public class Hijo extends Agent {
         }
  
 		// El padre confirma la recepcion del mensaje
-        protected void ......(ACLMessage agree)
+        protected void handleAgree(ACLMessage agree)
         {
             System.out.println("Mi padre " + agree.getSender().getName()
             + " dice que le preguntara a mi madre.");
         }
  
 		// El padre ha respondido que no puede
-        protected void ......(ACLMessage refuse)
+        protected void  handleRefuse (ACLMessage refuse)
         {
             System.out.println("Mi padre " + refuse.getSender().getName()
             + " dice que no, que tengo que madrugar.");
         }
  
 		// El padre no entendio el mensaje
-        protected void ......(ACLMessage notUnderstood)
+        protected void  handleNotUnderstood (ACLMessage notUnderstood)
         {
             System.out.println("Mi padre " + notUnderstood.getSender().getName()
             + " no esta en casa.");
         }
  
 		// El padre informa de la decision
-        protected void ......(ACLMessage inform)
+        protected void  handleInform (ACLMessage inform)
         {
             System.out.println("Mi padre " + inform.getSender().getName()
             + " dice que: " + inform.getContent() + ".");
         }
  
 		// No encuentra al padre (error)
-        protected void ......(ACLMessage fallo)
+        protected void handleFailure(ACLMessage fallo)
         {
             if (fallo.getSender().equals(myAgent.getAMS())) {
                 System.out.println("Soy huerfano....");

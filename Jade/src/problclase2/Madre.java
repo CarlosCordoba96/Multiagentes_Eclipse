@@ -7,18 +7,19 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ProposeResponder;
  
+//HIJO--FIPA QUERY--> PADRE --FIPA PROPOSE-->MADRE
 public class Madre extends Agent {
  
     protected void setup() {
         System.out.printf("Esperando peticiones...\n");
  
-        MessageTemplate  plantilla = ProposeResponder.createMessageTemplate(FIPANames.InteractionProtocol. ......);
+        MessageTemplate  plantilla = ProposeResponder.createMessageTemplate(FIPANames.InteractionProtocol.FIPA_PROPOSE);// tipo de protocolo
  
-        this.addBehaviour(new ResponderPermiso(this, ......));
+        this.addBehaviour(new ResponderPermiso(this,plantilla));
     }
  
     //Metodo que permite al usuario decidir si acepta la propuesta o si la rechaza.
-    private boolean ......(String agente, String propuesta) {
+    private boolean checkContent(String agente, String propuesta) {
         if (JOptionPane.showConfirmDialog(null, propuesta, agente + " dice:", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             return true;
         } else {
@@ -39,16 +40,16 @@ public class Madre extends Agent {
             if (Madre.this.checkContent(propuesta.getSender().getLocalName(), "Conceder permiso")) {
                 System.out.printf("Vale.\n");
  
-                ACLMessage agree = propuesta. ......(); // crear la respuesta
-                agree.setPerformative(ACLMessage. ......); // confirmamos
+                ACLMessage agree = propuesta.createReply(); // crear la respuesta
+                agree.setPerformative(ACLMessage.ACCEPT_PROPOSAL); // confirmamos
  
                 return agree;
             } else {
  
                 System.out.printf("No, mañana tiene que madrugar.\n");
  
-                ACLMessage refuse = propuesta. ......(); // crear la respuesta
-                refuse.setPerformative(ACLMessage. ......); //rechazamos
+                ACLMessage refuse = propuesta.createReply(); // crear la respuesta
+                refuse.setPerformative(ACLMessage.REJECT_PROPOSAL ); //rechazamos
  
                 return refuse;
             }
