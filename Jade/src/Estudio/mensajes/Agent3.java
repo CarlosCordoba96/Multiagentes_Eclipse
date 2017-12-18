@@ -14,29 +14,33 @@ public class Agent3 extends Agent {
 
 	class beha extends Behaviour{
 		MessageTemplate mt;
+		int result;
+		AID sender;
+		
 		public void onStart() {
-			//recivir de AG1
-			AID id= new AID();
-			id.setLocalName("Agente2");
-			MessageTemplate filtroemisor=MessageTemplate.MatchSender(id);
-			MessageTemplate filtroPerfor=MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
-			mt=MessageTemplate.and(filtroPerfor, filtroemisor);
+			sender=new AID();
+			sender.setLocalName("Agente2");
+			MessageTemplate filtroEmisor=MessageTemplate.MatchSender(sender);
+			MessageTemplate filtroPerf=MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+			mt=MessageTemplate.and(filtroEmisor,filtroPerf);
+			
 			
 
 		}
 
 		public void action() {
-			System.out.println("Esperando Mensaje de AG2");
-			ACLMessage msg=blockingReceive(mt);
-			ACLMessage respu=msg.createReply();
-			int resp2=Integer.parseInt(msg.getContent());
-			System.out.println("AGENTE3 RECIVE: "+resp2);
-			respu.setPerformative(ACLMessage.INFORM);
-			respu.setContent(""+resp2/2);
+			ACLMessage msg1=blockingReceive(mt);
+			result=Integer.parseInt(msg1.getContent());
+			System.out.println("3 recive de 2: "+result);
+			result=result/2;
 			
-			System.out.println("Enviando mensaje a 2 de 3 :"+resp2/2);
-			send(respu);
-
+			ACLMessage resp=msg1.createReply();
+			resp.setPerformative(ACLMessage.INFORM);
+			resp.setSender(getAID());
+			resp.setContent(""+result);
+			System.out.println("De 3 a 2 envia: "+result);
+			send(resp);
+			
 
 		}
 
@@ -45,7 +49,7 @@ public class Agent3 extends Agent {
 
 
 
-			return false;
+			return result==0;
 		}
 
 		public int onEnd() {

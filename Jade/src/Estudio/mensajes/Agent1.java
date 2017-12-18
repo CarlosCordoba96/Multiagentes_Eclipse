@@ -16,41 +16,41 @@ public class Agent1 extends Agent {
 
 	class beha extends Behaviour{
 		MessageTemplate mt;
-		AID emisor;
-		int naleatorio;
+		int result;
+		AID sender;
 		public void onStart() {
-			naleatorio=((int) (Math.random() * 99999)+1);
-			emisor= new AID();
-			emisor.setLocalName("Agente2");
-			MessageTemplate filtroemisor=MessageTemplate.MatchSender(emisor);
-			MessageTemplate filtroInform = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-            mt = MessageTemplate.and(filtroInform,filtroemisor);
-            
-            ACLMessage mensaje= new ACLMessage(ACLMessage.REQUEST);
-            mensaje.setSender(getAID());
-            mensaje.addReceiver(emisor);
-            mensaje.setContent(""+naleatorio);
-            
-            System.out.println("Enviando mensaje a AG2 : "+""+naleatorio);
-            send(mensaje);
+			result=((int) (Math.random()*9999)+1);
+			sender= new AID();
+			sender.setLocalName("Agente2");
+			MessageTemplate filtroemisor=MessageTemplate.MatchSender(sender);
+			MessageTemplate filtroperformative=	MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+			mt=MessageTemplate.and(filtroperformative, filtroemisor);
+			
+				
 
 		}
 
 		public void action() {
-			System.out.println("Esperando mensaje de AG2...");
-			ACLMessage msg1=blockingReceive(mt);
-			String response=msg1.getContent();
-			System.out.println(response);
-
-
+			ACLMessage msg1=new ACLMessage(ACLMessage.REQUEST);
+			String mesg=""+result;
+			msg1.setContent(mesg);
+			msg1.addReceiver(sender);
+			msg1.setSender(getAID());
+			System.out.println("1 a 2 envia: "+mesg);
+			send(msg1);
+			
+			ACLMessage resp;
+			resp= blockingReceive(mt);
+			result=Integer.parseInt(resp.getContent());
+			
+			if(result!=0) {
+				result=result/2;
+			}
 		}
 
 
 		public boolean done() {
-
-
-
-			return false;
+			return result==0;
 		}
 
 		public int onEnd() {
